@@ -3,11 +3,8 @@ Preprocess dataset for deepmath task.
 """
 
 import os
-import re
 import subprocess
 import tempfile
-import textwrap
-from io import BytesIO
 
 from PIL import Image, ImageChops, ImageOps
 from datasets import load_dataset, Sequence
@@ -117,8 +114,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--local_dir', default='/Users/kuan/code/math-ocr-zero/data/deepmath-ocr-1000')
     parser.add_argument('--num_samples', type=int, default=100000)
-    parser.add_argument('--train_size', type=int, default=100)
-    parser.add_argument('--test_size', type=int, default=100)
+    parser.add_argument('--train_size', type=int, default=10000)
+    parser.add_argument('--test_size', type=int, default=1000)
     parser.add_argument('--template_type', type=str, default='qwen-instruct')
 
     args = parser.parse_args()
@@ -166,18 +163,8 @@ if __name__ == '__main__':
             }
 
             return data
-
         return process_fn
 
-    # def save_image(dataset, split):
-    #     image_dir_path = os.path.join(args.local_dir, 'images', split)
-    #     if not os.path.exists(image_dir_path):
-    #         os.makedirs(image_dir_path)
-    #     for example in dataset:
-    #         image = Image.open(BytesIO(example['images'][0]["bytes"]))
-    #         idx = example['extra_info']['index']
-    #         image_path = os.path.join(image_dir_path, f'{idx}.png')
-    #         image.save(image_path)
 
     train_dataset = train_dataset.map(function=make_map_fn('train'), with_indices=True)
     test_dataset = test_dataset.map(function=make_map_fn('test'), with_indices=True)

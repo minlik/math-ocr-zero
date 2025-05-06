@@ -5,8 +5,8 @@ ENGINE=${1:-vllm}
 
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
-    data.train_files=/root/data/code/math-ocr-zero/data/deepmath-ocr-1000/train.parquet \
-    data.val_files=/root/data/code/math-ocr-zero/data/deepmath-ocr-1000/test.parquet \
+    data.train_files=$TRAIN_PATH \
+    data.val_files=$VALID_PATH \
     data.train_batch_size=128 \
     data.max_prompt_length=512 \
     data.max_response_length=1024 \
@@ -27,7 +27,7 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.actor.fsdp_config.param_offload=True \
     actor_rollout_ref.actor.fsdp_config.optimizer_offload=True \
     actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=20 \
-    actor_rollout_ref.rollout.tensor_model_parallel_size=4 \
+    actor_rollout_ref.rollout.tensor_model_parallel_size=$N_GPUS \
     actor_rollout_ref.rollout.name=$ENGINE \
     actor_rollout_ref.rollout.gpu_memory_utilization=0.9 \
     actor_rollout_ref.rollout.enable_chunked_prefill=False \
@@ -41,7 +41,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.logger=['console','wandb'] \
     trainer.project_name='verl_grpo_example_deepmath' \
     trainer.experiment_name='qwen2_5_vl_3b_deepmath-1000' \
-    trainer.n_gpus_per_node=4 \
+    trainer.n_gpus_per_node=$N_GPUS \
     trainer.nnodes=1 \
     trainer.save_freq=100 \
     trainer.test_freq=100 \
