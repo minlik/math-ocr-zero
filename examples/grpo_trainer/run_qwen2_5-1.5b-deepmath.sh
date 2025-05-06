@@ -5,19 +5,20 @@ ENGINE=${1:-vllm}
 
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
-    data.train_files=/root/data/data/deepmath-1000/train.parquet \
-    data.val_files=/root/data/data/deepmath-1000/test.parquet \
+    data.train_files=/root/data/deepmath-1000/train.parquet \
+    data.val_files=/root/data/deepmath-1000/test.parquet \
     data.train_batch_size=128 \
     data.max_prompt_length=256 \
     data.max_response_length=2048 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
     data.image_key=images \
+    'data.custom_chat_template="{% for msg in messages %}{{ msg.content }}{% endfor %}"' \
     actor_rollout_ref.model.path=/root/data/models/Qwen2.5-1.5B-Instruct \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_mini_batch_size=128 \
-    actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
+    actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
     actor_rollout_ref.actor.use_kl_loss=True \
     actor_rollout_ref.actor.kl_loss_coef=0.01 \
     actor_rollout_ref.actor.kl_loss_type=low_var_kl \
@@ -42,6 +43,6 @@ python3 -m verl.trainer.main_ppo \
     trainer.experiment_name='qwen2_5_1.5b_deepmath' \
     trainer.n_gpus_per_node=2 \
     trainer.nnodes=1 \
-    trainer.save_freq=100 \
-    trainer.test_freq=100 \
+    trainer.save_freq=1000 \
+    trainer.test_freq=20 \
     trainer.total_epochs=15 $@

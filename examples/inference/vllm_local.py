@@ -1,70 +1,75 @@
-import base64
+import json
+import re
 
-from transformers import AutoProcessor
+from datasets import load_dataset
+from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
-from qwen_vl_utils import process_vision_info
 
-MODEL_PATH = "Qwen/Qwen2.5-VL-3B-Instruct"
+from verl.utils.reward_score.deepmath import is_equiv
 
-llm = LLM(
-    model=MODEL_PATH,
-    limit_mm_per_prompt={"image": 10, "video": 10},
-)
+
+def generate_results(ds, dump_path):
+    prompt_list = [data[0]['content'] for data in ds['prompt']]
+    solution_list = [data for data in ds['final_answer']]
+
+    outputs = llm.generate(prompts=prompt_list, sampling_params=sampling_params)
+    generated_text_list = [output.outputs[0].text for output in outputs]
+    answer_list = [extract_solution(text) for text in generated_text_list]
+    results = []
+
+    scores = 0
+    for prompt, generated_text, answer, solution in zip(prompt_list, generated_text_list, answer_list, solution_list):
+        score = int(is_equiv(answer, solution))
+        results.append(
+            {
+                'prompt': prompt,
+                'generated_text': generated_text,
+                'generated_answer': answer,
+                'ground_truth': solution,
+                'score': score
+            }
+        )
+        scores += score
+    with open(dump_path, 'w') as fp:
+        json.dump(results, fp, indent=4)
+
+    print(f"scores: {scores}, total: {len(prompt_list)}, average: {scores / len(prompt_list)}")
+
+def extract_solution(solution_str):
+    """Extract the equation from the solution string."""
+    # Remove everything before the first "Assistant:"
+    # if "Assistant:" in solution_str:
+    #     solution_str = solution_str.split("Assistant:", 1)[1]
+    # elif "<|im_start|>assistant" in solution_str:
+    #     solution_str = solution_str.split("<|im_start|>assistant", 1)[1]
+    # else:
+    #     return None
+    solution_str = solution_str.split('\n')[-1]
+
+    answer_pattern = r'<answer>(.*?)</answer>'
+    match = re.finditer(answer_pattern, solution_str)
+    matches = list(match)
+    if matches:
+        final_answer = matches[-1].group(1).strip()
+    else:
+        final_answer = None
+    return final_answer
+
+MODEL_PATH = "/root/data/models/Qwen2.5-1.5B-Instruct-GRPO-deepmath-1k"
+TRAIN_DUMP_PATH = "/root/data/code/math-ocr-zero/examples/results/Qwen2.5-1.5B-Instruct-GRPO-deepmath-1k.train.json"
+TEST_DUMP_PATH = "/root/data/code/math-ocr-zero/examples/results/Qwen2.5-1.5B-Instruct-GRPO-deepmath-1k.test.json"
+
+llm = LLM(model=MODEL_PATH)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 
 sampling_params = SamplingParams(
-    temperature=0.1,
-    top_p=0.001,
-    repetition_penalty=1.05,
-    max_tokens=256,
-    stop_token_ids=[],
+    temperature=0,
+    max_tokens=2048,
 )
+train_ds = load_dataset("/root/data/deepmath-1000", split='train')
+test_ds = load_dataset("/root/data/deepmath-1000", split='test')
+print("====== train dataset ======")
+generate_results(train_ds, TRAIN_DUMP_PATH)
+print("====== test dataset ======")
+generate_results(test_ds, TEST_DUMP_PATH)
 
-
-image_path = "../images/1.png"
-with open(image_path, "rb") as f:
-    encoded_image = base64.b64encode(f.read())
-encoded_image_text = encoded_image.decode("utf-8")
-base64_qwen = f"data:image;base64,{encoded_image_text}"
-
-messages = [
-    {"role": "system", "content": "You are a helpful assistant. You first thinks about the reasoning process in the mind and then provides the user with the answer."},
-    {
-        "role": "user",
-        "content": [
-            {
-                "type": "image",
-                "image": base64_qwen,
-                "min_pixels": 224 * 224,
-                "max_pixels": 1280 * 28 * 28,
-            },
-            {"type": "text", "text": "Solve the problem shown in the image. Show your work in <think> </think> tags. And return the final answer in <answer> </answer> tags."},
-        ],
-    },
-]
-
-processor = AutoProcessor.from_pretrained(MODEL_PATH)
-prompt = processor.apply_chat_template(
-    messages,
-    tokenize=False,
-    add_generation_prompt=True,
-)
-image_inputs, video_inputs, video_kwargs = process_vision_info(messages, return_video_kwargs=True)
-
-mm_data = {}
-if image_inputs is not None:
-    mm_data["image"] = image_inputs
-if video_inputs is not None:
-    mm_data["video"] = video_inputs
-
-llm_inputs = {
-    "prompt": prompt,
-    "multi_modal_data": mm_data,
-
-    # FPS will be returned in video_kwargs
-    "mm_processor_kwargs": video_kwargs,
-}
-
-outputs = llm.generate([llm_inputs], sampling_params=sampling_params)
-generated_text = outputs[0].outputs[0].text
-
-print(generated_text)

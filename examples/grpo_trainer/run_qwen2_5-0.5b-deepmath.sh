@@ -1,5 +1,6 @@
 set -x
 ENGINE=${1:-vllm}
+
 # If you are using vllm<=0.6.3, you might need to set the following environment variable to avoid bugs:
 # export VLLM_ATTENTION_BACKEND=XFORMERS
 
@@ -11,7 +12,7 @@ python3 -m verl.trainer.main_ppo \
     data.max_prompt_length=256 \
     data.max_response_length=512 \
     data.filter_overlong_prompts=True \
-    data.custom_chat_template='{{ bos_token }}{{ messages }}' \
+    'data.custom_chat_template="{% for msg in messages %}{{ msg.content }}{% endfor %}"' \
     data.truncation='error' \
     data.image_key=images \
     actor_rollout_ref.model.path=/root/data/models/Qwen2.5-0.5B-Instruct \

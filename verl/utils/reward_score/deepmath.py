@@ -1,15 +1,43 @@
 import re
 
 
+def validate_format(text, min_think_length=20):
+    """solution_str: think process here</think><answer>final answer here</answer>"""
+    # 检查结构是否正确
+    pattern = re.compile(r'^.*?</think> <answer>.*?</answer>.*$', re.DOTALL)
+    if not pattern.match(text):
+        return False
+
+    # 检查出现次数是否正确
+    think_answer_count = len(re.findall(r'</think> <answer>', text))
+    answer_count = len(re.findall(r'</answer>', text))
+
+    if think_answer_count != 1 or answer_count != 1:
+        return False
+
+    # 确保顺序正确
+    think_answer_index = text.find('</think> <answer>')
+    answer_index = text.find('</answer>')
+
+    if think_answer_index >= answer_index:
+        return False
+
+    # 检查</think>前面至少字符数，保证有效思考
+    closing_think_index = text.find('</think>')
+    if closing_think_index < min_think_length:
+        return False
+
+    return True
+
 def extract_solution(solution_str):
     """Extract the equation from the solution string."""
     # Remove everything before the first "Assistant:"
-    if "Assistant:" in solution_str:
-        solution_str = solution_str.split("Assistant:", 1)[1]
-    elif "<|im_start|>assistant" in solution_str:
-        solution_str = solution_str.split("<|im_start|>assistant", 1)[1]
-    else:
-        return None
+    # if "Assistant:" in solution_str:
+    #     solution_str = solution_str.split("Assistant:", 1)[1]
+    # elif "<|im_start|>assistant" in solution_str:
+    #     solution_str = solution_str.split("<|im_start|>assistant", 1)[1]
+    # else:
+    #     return None
     solution_str = solution_str.split('\n')[-1]
 
     answer_pattern = r'<answer>(.*?)</answer>'
@@ -22,7 +50,10 @@ def extract_solution(solution_str):
     return final_answer
 
 
-def compute_score(solution_str, ground_truth, format_score=0.1, score=1.) -> float:
+def compute_score(solution_str, ground_truth, format_score=0.2, score=1.) -> float:
+    valid_format = validate_format(solution_str)
+    if not valid_format:
+        return -format_score
     answer = extract_solution(solution_str)
     if answer is None:
         return 0
@@ -225,3 +256,20 @@ def strip_string(string):
     string = fix_a_slash_b(string)
 
     return string
+
+
+if __name__ == '__main__':
+    text1 = r"think process here longer than 20</think> <answer>\frac{1}{2}</answer>"
+    text2 = "no closing tags here"
+    text3 = "wrong</answer>order</think> <answer>"
+    text4 = "think1</think><answer>answer1</answer>think2</think> <answer>answer2</answer>"
+    text5 = "less than 20</think> <answer>-2</answer>"
+    text6 = "think process here longer than 20</think> <answer>1/2</answer>"
+    ground_truth = r"\frac{1}{2}"
+    for solution_str in [text1, text2, text3, text4, text5, text6]:
+        print("==========" * 5)
+        print("solution:", solution_str)
+        print("format:", validate_format(solution_str))
+        print("answer:", extract_solution(solution_str))
+        print("score:", compute_score(solution_str, ground_truth))
+

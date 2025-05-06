@@ -19,9 +19,9 @@ Assistant: Let me solve this step by step.
     elif template_type == 'qwen-instruct':
         """This works for Qwen Instruct Models"""
         prefix = f"""<|im_start|>system
-You are a helpful assistant. The User asks a question, and you solve it. You should first think about the reasoning process in the mind and then provides the user with the answer. <|im_end|>
+You are a helpful assistant. The User asks a question, and you solve it. You should first think about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer should be enclosed within <think> </think> and <answer> </answer> tags, respectively.<|im_end|>
 <|im_start|>user
-Solve the question: {question}. The reasoning process and answer should be enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>.<|im_end|>
+{question}<|im_end|>
 <|im_start|>assistant
 Let me solve this step by step.\n<think>"""
     return prefix
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_samples', type=int, default=100000)
     parser.add_argument('--max_number', type=int, default=100)
     parser.add_argument('--train_size', type=int, default=1000)
-    parser.add_argument('--test_size', type=int, default=1000)
+    parser.add_argument('--test_size', type=int, default=100)
     parser.add_argument('--template_type', type=str, default='qwen-instruct')
 
     args = parser.parse_args()

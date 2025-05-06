@@ -21,7 +21,9 @@ from typing import List, Optional, Union
 import datasets
 import numpy as np
 import torch
+from PIL import Image
 from omegaconf import DictConfig, ListConfig
+from six import BytesIO
 from torch.utils.data import Dataset
 from transformers import PreTrainedTokenizer, ProcessorMixin
 
@@ -166,7 +168,17 @@ class RLHFDataset(Dataset):
 
             images = None
             if self.image_key in row_dict:
-                images = [process_image(image) for image in row_dict.pop(self.image_key)]
+                raw_images = row_dict.pop(self.image_key)
+                images = []
+                for raw_image in raw_images:
+                    if type(raw_image) is dict and "bytes" in raw_image:
+                        image = Image.open(BytesIO(raw_image["bytes"]))
+                    elif isinstance(raw_image, Image.Image):
+                        image = raw_image
+                    else:
+                        raise TypeError(f"unknown image type {type(raw_image)}")
+                    images.append(process_image(image))
+                # images = [process_image(image) for image in row_dict.pop(self.image_key)]
                 multi_modal_data["image"] = images
 
             videos = None
