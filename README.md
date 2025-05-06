@@ -45,3 +45,8 @@ This project is based on the following projects.
 [TinyZero](https://github.com/Jiayi-Pan/TinyZero#)
 
 [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL)
+
+## To Do
+- [ ] Mix different open-source datasets to improve model's reasoning and generalization ability.
+- [ ] Set different length penalties or rewards based on the difficulty of the task to avoid overthinking on simple tasks.
+
