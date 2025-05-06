@@ -38,7 +38,7 @@ sh examples/grpo_trainer/run_qwen2_5_vl-3b-deepmath.sh
 
 
 ## Acknowledge
-This project is based on the following projects.
+This project builds upon the following works:
 
 [VeRL](https://github.com/volcengine/verl)
 
