@@ -102,11 +102,16 @@ class TaskRunner:
 
         trust_remote_code = config.data.get("trust_remote_code", False)
         custom_chat_template = config.data.get('custom_chat_template', None)
+        image_min_pixels = config.data.get('image_min_pixels', 4 * 28 * 28)
+        image_max_pixels = config.data.get('image_max_pixels', 1280 * 28 * 28)
         tokenizer = hf_tokenizer(local_path,
                                  trust_remote_code=trust_remote_code,
                                  custom_chat_template=custom_chat_template)
         processor = hf_processor(local_path, use_fast=True,
-                                 custom_chat_template=custom_chat_template)  # used for multimodal LLM, could be none
+                                 custom_chat_template=custom_chat_template,
+                                 min_pixels=image_min_pixels,
+                                 max_pixels=image_max_pixels
+                                 )  # used for multimodal LLM, could be none
 
         # define worker classes
         if config.actor_rollout_ref.actor.strategy == "fsdp":

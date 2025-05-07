@@ -1,4 +1,7 @@
 # Math-OCR-Zero
+**Math-OCR-Zero:** A high-quality mathematical dataset for reinforcement learning in multimodal large models
+
+
 Math-OCR-Zero is based on the VeRL framework and leverages the synthetic OCR-Math dataset to enhance the reasoning capabilities of multimodal large models. It serves as a reproduction of DeepSeek-R1-Zero in the context of multimodal large models.
 
 By generating multimodal data from the [DeepMath-103k](https://huggingface.co/datasets/zwhe99/DeepMath-103K) dataset and applying the GRPO reinforcement learning method, we demonstrate the self-reflection capability of multimodal large models on the qwen2.5-VL-3B-Instruct model.
@@ -33,7 +36,7 @@ sh examples/grpo_trainer/run_qwen2_5_vl-3b-deepmath.sh
 
 ## Datasets
 
-Here are samples of the generated images:
+Here are some samples of the generated images:
 ![3.png](examples/images/3.png)
 ![2.png](examples/images/2.png)
 ![1.png](examples/images/1.png)
@@ -54,7 +57,7 @@ This project builds upon the following works:
 [DeepMath-103K](https://huggingface.co/datasets/zwhe99/DeepMath-103K)
 
 ## To Do
-- [ ] Use more data, train larger models.
+- [ ] Use more data, and train larger models.
 - [ ] Mix different open-source datasets to improve model's reasoning and generalization ability.
 - [ ] Set different length penalties or rewards based on the difficulty of the task to avoid overthinking on simple tasks.
 
