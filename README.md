@@ -1,7 +1,7 @@
 # Math-OCR-Zero
-Math-OCR-Zero is based on the VeRL framework and leverages the synthetic OCR-Math dataset to enhance the reasoning capabilities of multimodal large models. It serves as a reproduction of DeepSeek-Zero in the context of multimodal large models.
+Math-OCR-Zero is based on the VeRL framework and leverages the synthetic OCR-Math dataset to enhance the reasoning capabilities of multimodal large models. It serves as a reproduction of DeepSeek-R1-Zero in the context of multimodal large models.
 
-By generating multimodal data from the DeepMath-103k dataset and applying the GRPO reinforcement learning method, we demonstrate the self-reflection capability of multimodal large models on the qwen2.5-VL-3B-Instruct model.
+By generating multimodal data from the [DeepMath-103k](https://huggingface.co/datasets/zwhe99/DeepMath-103K) dataset and applying the GRPO reinforcement learning method, we demonstrate the self-reflection capability of multimodal large models on the qwen2.5-VL-3B-Instruct model.
 ## Installation
 ```python
 conda create -n math-zero python=3.11
