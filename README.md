@@ -33,9 +33,14 @@ sh examples/grpo_trainer/run_qwen2_5_vl-3b-deepmath.sh
 
 ## Datasets
 
+Here are samples of the generated images:
+![1.png](examples/images/1.png)
+![2.png](examples/images/2.png)
+![3.png](examples/images/3.png)
 
 ## Models
-
+[Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k](https://huggingface.co/minlik/Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k)
+![img.png](examples/images/vl_3b_critic_score.png)
 
 ## Acknowledge
 This project builds upon the following works:
@@ -45,6 +50,8 @@ This project builds upon the following works:
 [TinyZero](https://github.com/Jiayi-Pan/TinyZero#)
 
 [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL)
+
+[DeepMath-103K](https://huggingface.co/datasets/zwhe99/DeepMath-103K)
 
 ## To Do
 - [ ] Mix different open-source datasets to improve model's reasoning and generalization ability.
