@@ -34,9 +34,9 @@ sh examples/grpo_trainer/run_qwen2_5_vl-3b-deepmath.sh
 ## Datasets
 
 Here are samples of the generated images:
-![1.png](examples/images/1.png)
-![2.png](examples/images/2.png)
 ![3.png](examples/images/3.png)
+![2.png](examples/images/2.png)
+![1.png](examples/images/1.png)
 
 ## Models
 [Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k](https://huggingface.co/minlik/Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k)
@@ -54,6 +54,7 @@ This project builds upon the following works:
 [DeepMath-103K](https://huggingface.co/datasets/zwhe99/DeepMath-103K)
 
 ## To Do
+- [ ] Use more data, train larger models.
 - [ ] Mix different open-source datasets to improve model's reasoning and generalization ability.
 - [ ] Set different length penalties or rewards based on the difficulty of the task to avoid overthinking on simple tasks.
 
