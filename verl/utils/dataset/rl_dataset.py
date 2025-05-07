@@ -158,13 +158,11 @@ class RLHFDataset(Dataset):
         """
         row_dict: dict = self.dataframe[item]
         messages = self._build_messages(row_dict)
-        model_inputs = {}
 
         if self.processor is not None:
             from verl.utils.dataset.vision_utils import process_image, process_video
 
             raw_prompt = self.processor.apply_chat_template(messages, add_generation_prompt=False, tokenize=False)
-            print(raw_prompt)
             multi_modal_data = {}
 
             images = None
