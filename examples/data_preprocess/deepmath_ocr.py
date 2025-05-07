@@ -106,14 +106,12 @@ def convert_to_image(question: str,
 
         # 7. 保存最终图像
         final.save(save_path)
-        print("image:", isinstance(final, Image.Image))
         return final
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--local_dir', default='/Users/kuan/code/math-ocr-zero/data/deepmath-ocr-1000')
-    parser.add_argument('--num_samples', type=int, default=100000)
+    parser.add_argument('--local_dir', default='/Users/kuan/code/math-ocr-zero/data/deepmath-ocr-10000')
     parser.add_argument('--train_size', type=int, default=10000)
     parser.add_argument('--test_size', type=int, default=1000)
     parser.add_argument('--template_type', type=str, default='qwen-instruct')
@@ -136,14 +134,14 @@ if __name__ == '__main__':
             try:
                 question = make_prefix(template_type=args.template_type)
                 final_answer = example['final_answer']
-                save_dir = os.path.join(args.local_dir, split)
+                save_dir = os.path.join(args.local_dir, 'images', split)
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)
                 save_path = os.path.join(save_dir, f"{idx}.png")
                 image = convert_to_image(example['question'], save_path)  # 可能抛出异常
             except Exception as e:
                 print(f"Error processing example at index {idx}: {e}")
-                return
+                image = None
             data = {
                 "data_source": data_source,
                 "prompt": [{
@@ -166,10 +164,10 @@ if __name__ == '__main__':
         return process_fn
 
 
-    train_dataset = train_dataset.map(function=make_map_fn('train'), with_indices=True)
-    test_dataset = test_dataset.map(function=make_map_fn('test'), with_indices=True)
-    train_dataset = train_dataset.filter(lambda x: x is not None)
-    test_dataset = test_dataset.filter(lambda x: x is not None)
+    train_dataset = train_dataset.map(function=make_map_fn('train'), with_indices=True, num_proc=8)
+    test_dataset = test_dataset.map(function=make_map_fn('test'), with_indices=True, num_proc=8)
+    train_dataset = train_dataset.filter(lambda x: x['images'][0] is not None)
+    test_dataset = test_dataset.filter(lambda x: x['images'][0] is not None)
     train_dataset = train_dataset.cast_column("images", Sequence(ImageFeature()))
     train_dataset = train_dataset.cast_column("images", Sequence(ImageFeature()))
     print('train dataset:', len(train_dataset))

@@ -1,7 +1,12 @@
 set -x
 ENGINE=${1:-vllm}
+TRAIN_PATH=${2:-"/root/data/code/math-ocr-zero/data/deepmath-ocr-1000/train.parquet"}
+VALID_PATH=${3:-"/root/data/code/math-ocr-zero/data/deepmath-ocr-1000/test.parquet"}
+N_GPUS=${4:-4}
 # If you are using vllm<=0.6.3, you might need to set the following environment variable to avoid bugs:
 # export VLLM_ATTENTION_BACKEND=XFORMERS
+TEMPLATE="{% for message in messages %}{% for content in message['content'] %}{% if content['type'] == 'image' %}<|vision_start|><|image_pad|><|vision_end|>{% elif 'text' in content %}{{ content['text'] }}{% endif %}{% endfor %}{% endfor %}"
+
 
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
@@ -11,9 +16,9 @@ python3 -m verl.trainer.main_ppo \
     data.max_prompt_length=512 \
     data.max_response_length=1024 \
     data.filter_overlong_prompts=True \
-    data.truncation='error' \
+    data.truncation='right' \
     data.image_key=images \
-    'data.custom_chat_template="{% for msg in messages %}{{ msg.content }}{% endfor %}"' \
+    'data.custom_chat_template="'"$TEMPLATE"'"' \
     actor_rollout_ref.model.path=/root/data/models/Qwen2.5-VL-3B-Instruct \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
@@ -44,5 +49,5 @@ python3 -m verl.trainer.main_ppo \
     trainer.n_gpus_per_node=$N_GPUS \
     trainer.nnodes=1 \
     trainer.save_freq=100 \
-    trainer.test_freq=100 \
-    trainer.total_epochs=15 $@
+    trainer.test_freq=20 \
+    trainer.total_epochs=10 $@

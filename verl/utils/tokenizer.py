@@ -63,10 +63,11 @@ def hf_tokenizer(name_or_path, correct_pad_token=True, correct_gemma2=True, cust
     return tokenizer
 
 
-def hf_processor(name_or_path, **kwargs):
+def hf_processor(name_or_path, custom_chat_template=None, **kwargs):
     """Create a huggingface processor to process multimodal data.
 
     Args:
+        custom_chat_template:
         name_or_path (str): The name of the processor.
 
     Returns:
@@ -82,4 +83,7 @@ def hf_processor(name_or_path, **kwargs):
     # https://github.com/huggingface/transformers/blob/v4.49.0/src/transformers/models/auto/processing_auto.py#L344
     if processor is not None and "Processor" not in processor.__class__.__name__:
         processor = None
+    if processor is not None and custom_chat_template is not None:
+        processor.chat_template = custom_chat_template
+
     return processor
