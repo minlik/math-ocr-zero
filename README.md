@@ -35,6 +35,8 @@ sh examples/grpo_trainer/run_qwen2_5_vl-3b-deepmath.sh
 ```
 
 ## Datasets
+[deepmath-ocr-100000](https://huggingface.co/datasets/minlik/deepmath-ocr-100000)
+
 
 Here are some samples of the generated images:
 ![3.png](examples/images/3.png)
