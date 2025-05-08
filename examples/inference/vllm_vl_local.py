@@ -7,11 +7,11 @@ from vllm import LLM, SamplingParams
 from qwen_vl_utils import process_vision_info
 from verl.utils.reward_score.deepmath import is_equiv, extract_solution
 
-MODEL_PATH = "/root/data/models/Qwen2.5-VL-3B-Instruct"
+MODEL_PATH = "/root/data/models/Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k-2"
 DATA_PATH = "/root/data/code/math-ocr-zero/data/deepmath-ocr-1000/"
 
-TRAIN_DUMP_PATH = "/root/data/code/math-ocr-zero/examples/results/Qwen2.5-VL-3B-Instruct.train.json"
-TEST_DUMP_PATH = "/root/data/code/math-ocr-zero/examples/results/Qwen2.5-VL-3B-Instruct.test.json"
+TRAIN_DUMP_PATH = "/root/data/code/math-ocr-zero/examples/results/Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k-2.train.json"
+TEST_DUMP_PATH = "/root/data/code/math-ocr-zero/examples/results/Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k-2.test.json"
 
 
 def generate_results(ds, dump_path):
@@ -78,7 +78,7 @@ def get_llm_inputs(prompt, image):
 
 
 sampling_params = SamplingParams(
-    temperature=0.1,
+    temperature=0.7,
     top_p=0.001,
     repetition_penalty=1,
     max_tokens=2048,
