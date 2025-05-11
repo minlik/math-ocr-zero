@@ -39,13 +39,23 @@ sh examples/grpo_trainer/run_qwen2_5_vl-3b-deepmath.sh
 
 
 Here are some samples of the generated images:
+
 ![3.png](examples/images/3.png)
 ![2.png](examples/images/2.png)
 ![1.png](examples/images/1.png)
 
 ## Models
+
 [Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k](https://huggingface.co/minlik/Qwen2.5-VL-3B-Instruct-GRPO-deepmath-ocr-1k)
-![img.png](examples/images/vl_3b_critic_score.png)
+
+![vl_3b_step90_critic_score.png](examples/images/vl_3b_step90_critic_score.png)
+![vl_3b_step90_response_len.png](examples/images/vl_3b_step90_response_len.png)
+
+
+[Qwen2.5-Vl-3B-Instruct-GRPO-deepmath-7k](https://huggingface.co/minlik/Qwen2.5-Vl-3B-Instruct-GRPO-deepmath-7k)
+
+![vl_3b_step610_critic_score.png](examples/images/vl_3b_step610_critic_score.png)
+![vl_3b_step610_response_len.png](examples/images/vl_3b_step610_response_len.png)
 
 ## Acknowledge
 This project builds upon the following works:
