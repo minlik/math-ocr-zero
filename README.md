@@ -56,6 +56,7 @@ Here are some samples of the generated images:
 
 ![vl_3b_step610_critic_score.png](examples/images/vl_3b_step610_critic_score.png)
 ![vl_3b_step610_response_len.png](examples/images/vl_3b_step610_response_len.png)
+![vl_3b_step610_entropy.png](examples/images/vl_3b_step610_entropy.png)
 
 ## Acknowledge
 This project builds upon the following works:
